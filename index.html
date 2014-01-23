@@ -1,0 +1,74 @@
+<html>
+  <head>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.js"></script>
+    <script src="http://underscorejs.org/underscore.js"></script>
+    <script src="src/raphael-min.js"></script>
+  </head>
+  <body>
+<script>
+  MediaStreamTrack.getSources(function(media_sources) {
+    var sources = [];
+    for (var i = 0; i < media_sources.length; i++) {
+        sources.push(media_sources[i]);
+    }
+    var soundFlower = sources[0]
+    
+    
+    var constraints = {};
+    if (soundFlower.kind == 'audio') {
+      constraints.audio = {
+        optional: [{ sourceId: soundFlower.id}]
+      };
+    };
+ 
+  
+    navigator.webkitGetUserMedia(constraints, function (stream) {
+      // var mediaElement = document.createElement(soundFlower.kind);
+      // mediaElement.src = window.URL.createObjectURL(stream);
+      // document.body.appendChild(mediaElement);
+      // mediaElement.controls = true;
+      // mediaElement.play();
+
+
+      var context = new webkitAudioContext();
+      var source = context.createMediaStreamSource(stream);
+      var audioAnalyser = context.createAnalyser();
+      var audioAnalyzedData = new Uint8Array(audioAnalyser.frequencyBinCount);
+
+      source.connect(audioAnalyser);
+
+
+
+      var paper = Raphael(10, 50, 1000, 700);
+
+      setInterval(function() {
+        audioAnalyser.getByteFrequencyData(audioAnalyzedData);
+        paper.clear(); 
+
+        _.each(audioAnalyzedData, function(data, i) { 
+
+          circ = paper.circle(i, data, 1);
+          
+        })
+
+
+        if (audioAnalyzedData[100] > 120){
+        };
+
+
+      },20);
+    })
+    
+
+   
+
+  });
+  
+
+
+
+
+
+</script>
+  </body>
+</html>
